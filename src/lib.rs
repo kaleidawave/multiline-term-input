@@ -1,8 +1,10 @@
-use std::io;
-use winconsole::input::{is_key_down, KeyCode};
+/// Reads string where if shift is pressed while new line then keeps reading.
+/// Returns the length of string read in
+#[cfg(target_os = "windows")]
+pub fn read_string(stdin: &mut std::io::Stdin, buf: &mut String) -> usize {
+    use std::io;
+    use winconsole::input::{is_key_down, KeyCode};
 
-/// Reads string where if shift is pressed while new line then keeps app
-pub fn read_string(stdin: &mut io::Stdin, buf: &mut String) -> usize {
     let mut total_count = 0;
     while let Ok(count) = stdin.read_line(buf) {
         total_count += count;
