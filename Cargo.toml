@@ -1,15 +1,23 @@
 [package]
 name = "multiline-term-input"
-version = "0.0.0"
+version = "0.1.0"
 edition = "2018"
 authors = ["Ben <kaleidawave@gmail.com>"]
 description = "Utility for input of multiline strings"
 license = "MIT"
-keywords = ["terminal", "console", "input"]
-categories = ["command-line-interface", "command-line-interface"]
+keywords = [
+	"terminal",
+	"console",
+	"input"
+]
+categories = ["command-line-interface"]
 repository = "https://github.com/kaleidawave/multiline-term-input"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-winconsole = { version =  "0.11.1", features = ["input"] }
+winconsole = { version = "0.11.1", features = ["input"] }
+
+[lib]
+name = "multiline-term-input"
+path = "lib.rs"
