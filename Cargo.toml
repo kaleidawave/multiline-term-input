@@ -19,5 +19,5 @@ repository = "https://github.com/kaleidawave/multiline-term-input"
 winconsole = { version = "0.11.1", features = ["input"] }
 
 [lib]
-name = "multiline-term-input"
+name = "multiline_term_input"
 path = "lib.rs"
