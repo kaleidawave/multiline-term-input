@@ -1,5 +1,3 @@
 # multiline-term-input
 
-A simple input library that mimics the shift+enter to break to newline behavior of nodejs's repl
-
-**Only works on windows for now**
+A simple input library that handles `shift+enter`. If `mode == Mode::ReturnOnUndecoratedNewLine` then adds newline (same behavior as nodejs's REPL) else with `mode == Mode::ReturnOnShiftNewLine` continues until `shift+enter` is pressed.
