@@ -1,3 +1,5 @@
+#![doc = include_str!("README.md")]
+
 #[derive(Debug, Default, PartialEq, Eq)]
 pub enum Mode {
 	#[default]
@@ -5,15 +7,18 @@ pub enum Mode {
 	ReturnOnShiftNewLine,
 }
 
+/// Prompt, mode and prefix for reading
 #[derive(Debug, Default)]
 pub struct Options<'a> {
-	pub prefix: &'a str,
-	pub return_mode: Mode,
+	/// Initial printed line (with new line);
 	pub prompt: &'a str,
+	/// Prepended on each new line
+	pub prefix: &'a str,
+	/// What key combination to return on
+	pub return_mode: Mode,
 }
 
-/// Reads string where if shift is pressed while new line then keeps reading.
-/// Returns the length of string read in
+/// Reads string from `stdin`. If shift is pressed while new line then keeps reading (or skips depending on `options.mode`).
 #[cfg(target_os = "windows")]
 pub fn read_to_string(options: Options<'_>) -> std::io::Result<String> {
 	use std::io::{self, Write};
@@ -24,13 +29,25 @@ pub fn read_to_string(options: Options<'_>) -> std::io::Result<String> {
 
 	let Options { prefix, return_mode, prompt } = options;
 
-	write!(&mut stdout, "{prompt}");
-	Write::flush(&mut io::stdout())?;
+	if !prompt.is_empty() {
+		let mut stdout = io::stdout();
+		write!(&mut stdout, "{prompt}");
+		Write::flush(&mut stdout)?;
+	}
 
-	while let Ok(count) = stdin.read_line(buf) {
+	if !prefix.is_empty() {
+		let mut stdout = io::stdout();
+		write!(&mut stdout, "{prefix}")?;
+		Write::flush(&mut stdout)?;
+		buf.push_str(prefix);
+	}
+
+	while let Ok(count) = stdin.read_line(&mut buf) {
 		if is_key_down(KeyCode::Shift) == matches!(return_mode, Mode::ReturnOnUndecoratedNewLine) {
+			let mut stdout = io::stdout();
 			write!(&mut stdout, "{prefix}");
-			Write::flush(&mut std::io::stdout());
+			Write::flush(&mut stdout);
+			buf.push_str(prefix);
 		} else {
 			break;
 		}
@@ -38,6 +55,7 @@ pub fn read_to_string(options: Options<'_>) -> std::io::Result<String> {
 	Ok(buf)
 }
 
+/// Reads string from `stdin`. If shift is pressed while new line then keeps reading (or skips depending on `options.mode`).
 #[cfg(not(target_os = "windows"))]
 pub fn read_to_string(options: Options<'_>) -> std::io::Result<String> {
 	use crossterm::terminal;
